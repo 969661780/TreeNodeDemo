@@ -256,4 +256,62 @@ func isSameTree(_ p: TreeNode?, _ q: TreeNode?) -> Bool {
     }
     return p?.val == q?.val && isSameTree(p?.left, q?.left) && isSameTree(p?.right, q?.right)
 }
+//4.翻转二叉树
+func invertTree(_ root: TreeNode?) -> TreeNode? {
+    guard root != nil else {
+        return root
+    }
+    var rootNode = root
+    let leftNode = invertTree(rootNode?.left)
+    let rightNode = invertTree(rootNode?.right)
+    rootNode?.left = rightNode
+    rootNode?.right = leftNode
+    return rootNode
+    
+}
+let root1 = TreeNode.init(3)
+root1.left = TreeNode.init(9)
+root1.right = TreeNode.init(20)
+root1.right?.left = TreeNode.init((15))
+root1.right?.right = TreeNode.init(7)
+invertTree(root1)
+//左叶子节点之和
+func sumOfLeftLeaves(_ root: TreeNode?) -> Int {
+    guard root != nil else {
+        return 0
+    }
+    var queue = [TreeNode]()
+    queue.append(root!)
+    var sum = 0
+    while !queue.isEmpty {
+        for _ in 0..<queue.count {
+            let first = queue.removeFirst()
+            if first.left != nil {
+                if !(first.left?.left == nil && first.left?.right == nil) {
+                    queue.append(first.left!)
+                }else{
+                    sum += first.left!.val
+                }
+                
+            }
+            if first.right != nil {
+                if !(first.right?.left == nil && first.right?.right == nil) {
+                    queue.append(first.right!)
+                }
+               
+            }
+        }
+    }
+    return sum
+}
+func sumOfLeftLeaves1(_ root: TreeNode?) -> Int {
+    guard let root = root else { return 0 }
+    var ans = 0
+    if let l = root.left, l.left == nil && l.right == nil {
+        ans += l.val
+    }
+    ans += sumOfLeftLeaves(root.left)
+    ans += sumOfLeftLeaves(root.right)
+    return ans
+}
 
