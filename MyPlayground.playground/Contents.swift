@@ -261,7 +261,7 @@ func invertTree(_ root: TreeNode?) -> TreeNode? {
     guard root != nil else {
         return root
     }
-    var rootNode = root
+    let rootNode = root
     let leftNode = invertTree(rootNode?.left)
     let rightNode = invertTree(rootNode?.right)
     rootNode?.left = rightNode
@@ -314,4 +314,144 @@ func sumOfLeftLeaves1(_ root: TreeNode?) -> Int {
     ans += sumOfLeftLeaves(root.right)
     return ans
 }
-
+//二叉搜索树的最近公共节点
+func lowestCommonAncestor(_ root: TreeNode?, _ p: TreeNode?, _ q: TreeNode?) -> TreeNode?
+{
+    guard root != nil else {
+        return root
+    }
+    if root!.val<p!.val && root!.val<q!.val {
+        lowestCommonAncestor(root?.right, p, q)
+    }else if root!.val>p!.val && root!.val > q!.val{
+        lowestCommonAncestor(root?.left, p, q)
+    }
+    return root
+}
+func lowestCommonAncestor1(_ root: TreeNode?, _ p: TreeNode?, _ q: TreeNode?) -> TreeNode?
+{
+    if root == nil || root === p || root === q {
+        return root
+    }
+    let left = lowestCommonAncestor1(root?.left, p, q)
+    let right = lowestCommonAncestor1(root?.right, p, q)
+ 
+    if left == nil {
+        return right
+    }
+    if right == nil {
+        return left
+    }
+    return root
+}
+//二叉树的层次遍历
+func levelOrderBottom(_ root: TreeNode?) -> [[Int]]
+{
+    guard root != nil else {
+        return []
+    }
+    var queue = [TreeNode]()
+    queue.append(root!)
+    var resultArr = [[Int]]()
+    while !queue.isEmpty {
+        var arr = [Int]()
+        for _ in 0..<queue.count {
+            let first = queue.removeFirst()
+            arr.append(first.val)
+            if first.left != nil {
+                queue.append(first.left!)
+            }
+            if first.right != nil {
+                queue.append(first.right!)
+            }
+        }
+        resultArr.insert(arr, at: 0)
+    }
+    return resultArr
+}
+//将有序数组转换为二叉搜索树
+func sortedArrayToBST(_ nums: [Int]) -> TreeNode? {
+  return  DFS(nums, 0, nums.count - 1)
+}
+func DFS(_ nums:[Int],_ low:Int,_ height:Int) ->TreeNode?
+{
+    if low>height {
+        return nil
+    }
+    let mid = (height - low)/2 + low
+    let treeNode = TreeNode.init(nums[mid])
+    treeNode.left = DFS(nums, low, mid-1)
+    treeNode.right = DFS(nums, mid+1, height)
+    return treeNode
+}
+//二叉树中序遍历
+func inorderTraversal(_ root: TreeNode?) -> [Int] {
+    guard root != nil else {
+        return []
+    }
+    var resultArr = [Int]()
+    if root?.left != nil {
+        resultArr += inorderTraversal(root?.left)
+    }
+    resultArr.append(root!.val)
+    if root?.right != nil {
+        resultArr += inorderTraversal(root?.right)
+    }
+    return resultArr
+}
+//二叉树转换为链表
+func flatten(_ root: TreeNode?) {
+    guard root != nil else {
+        return
+    }
+    var rootArr = [TreeNode]()
+    midTr(root!, &rootArr)
+    for i in 1..<rootArr.count {
+        let node1 = rootArr[i]
+        let node2 = rootArr[i-1]
+        node2.left = nil
+        node2.right = node1
+    }
+}
+func midTr(_ root:TreeNode,_ arr:inout [TreeNode])
+{
+    arr.append(root)
+    if root.left != nil {
+        midTr(root.left!, &arr)
+    }
+    if root.right != nil {
+        midTr(root.right!, &arr)
+    }
+}
+//不同的二叉搜索树:卡特兰树
+func numTrees(_ n: Int) -> Int {
+    guard n>1 else {
+        return 1
+    }
+    var num = Array.init(repeating: 1, count: n+1)
+    for i in 2...n {
+        for j in 0...i-1 {
+            num[i] += num[j]*num[i-j-1]
+        }
+    }
+    return num[n]
+}
+numTrees(2)
+//验证二叉搜索树
+func isValidBST(_ root: TreeNode?) -> Bool {
+    return inorder(root)
+}
+var preNode : TreeNode?
+func inorder(_ root:TreeNode?) -> Bool {
+    guard let root = root else {
+        return true
+    }
+    if inorder(root.left) == false {
+        return false
+    }
+    if preNode != nil && preNode!.val >= root.val {
+        return false
+    }
+    preNode = root
+    
+    return inorder(root.right)
+}
