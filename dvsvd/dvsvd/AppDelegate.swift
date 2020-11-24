@@ -155,7 +155,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         root1.right = TreeNode.init(20)
         root1.right?.left = TreeNode.init((15))
         root1.right?.right = TreeNode.init(7)
-        invertTree(root1)
+//        invertTree(root1)
+        let dwdqa =  inorderTraversal(root1)
+        
         return true
     }
     //4.翻转二叉树
@@ -169,8 +171,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return root
         
     }
-  
+    func inorderTraversal(_ root: TreeNode?) -> [Int] {
+        var stack : [TreeNode] = []
+        var result : [Int] = []
+        var node : TreeNode? = root
+        while node != nil || !stack.isEmpty {
+            while node != nil {
+                stack.append(node!)
+                node = node?.left
+            }
+            node = stack.popLast()
+            result.append(node!.val)
+            node = node?.right
+        }
+        return result
+    }
 
+    
     // MARK: UISceneSession Lifecycle
 
     func application(_ application: UIApplication, configurationForConnecting connectingSceneSession: UISceneSession, options: UIScene.ConnectionOptions) -> UISceneConfiguration {
