@@ -16,6 +16,14 @@ public class TreeNode{
         self.right = nil
     }
 }
+public class ListNode{
+    public var val:Int?
+    public var next:ListNode?
+    public init(_ val:Int){
+        self.next = nil
+        self.val = val
+    }
+}
 @main
 
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -133,11 +141,147 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         return hight - low > 1 ? false : true
     }
-
-
+    func generate(_ numRows: Int) -> [[Int]] {
+        guard numRows != 0 else {
+            return []
+        }
+        var reslutArr = [[Int]]()
+        let first = [1]
+        getResultArr(first, &reslutArr, numRows)
+        return reslutArr
+    }
+    func getResultArr(_ firstArr:[Int],_ resultArr:inout [[Int]],_ numRows:Int)
+    {
+        if resultArr.count == numRows {
+            return
+        }
+        var nextArr = [Int]()
+        for i in 0...firstArr.count {
+            var curResult = 1
+            if i != 0 && i != firstArr.count {
+                curResult = firstArr[i] + firstArr[i-1]
+            }else{
+                curResult = 1
+            }
+            nextArr.append(curResult)
+        }
+        resultArr.append(nextArr)
+        getResultArr(nextArr, &resultArr, numRows)
+    }
+    func merge(_ nums1: inout [Int], _ m: Int, _ nums2: [Int], _ n: Int) {
+        var index1 = 0
+        var index2 = 0
+        if m == 0 {
+            nums1 = nums2
+            return
+        }
+        while index2<n {
+            if nums1[index1] <= nums2[index2] {
+                if index1 >= m + index2{
+                    nums1[index1] = nums2[index2]
+                    index2 += 1
+                }
+                index1 += 1
+            }else{
+                nums1.insert(nums2[index2], at: index1)
+                index1 += 1
+                index2 += 1
+            }
+        }
+    }
+    func threeSumClosest(_ nums: [Int], _ target: Int) -> Int {
+        let nums = nums.sorted()
+        var resultTaget = 10000
+        for i in 0..<nums.count {
+            let nowTaget = target - nums[i]
+            var left = i + 1
+            var right = nums.count - 1
+            if right <= left {
+                break
+            }
+            while left < right {
+                if nums[left] + nums[right] == nowTaget {
+                    return target
+                }
+                let nowTaget1 = nums[i] + nums[left] + nums[right]
+                if abs(nowTaget1 - target) < abs(resultTaget - target) {
+                    resultTaget = nowTaget1
+                }
+                if nums[left] + nums[right] < nowTaget {
+                    left += 1
+                }
+                if nums[left] + nums[right] > nowTaget {
+                       right -= 1
+                }
+            }
+        }
+        return resultTaget
+    }
+//    func reverseList(_ head: ListNode?) -> ListNode? {
+//        guard head != nil else {
+//            return head
+//        }
+//        var headNode : ListNode? = nil
+//        var nowNode = head
+//        while nowNode != nil {
+//            let runNode = nowNode?.next
+//            nowNode?.next = headNode
+//            headNode = nowNode
+//            nowNode = runNode
+//        }
+//        return headNode
+//    }
+ 
+    func swapPairs(_ head: ListNode?) -> ListNode? {
+        if head == nil || head?.next == nil {
+            return head
+        }
+        let resultNode = head?.next
+        var nowHead1 = ListNode.init(0)
+        nowHead1.next = head
+        while nowHead1.next != nil {
+            let a = nowHead1.next
+            let b = a!.next
+            a?.next = b?.next
+            b?.next = a
+            nowHead1.next = b
+            nowHead1 = a!
+        }
+        return resultNode
+    }
+    func removeNthFromEnd(_ head: ListNode?, _ n: Int) -> ListNode? {
+        var n = n
+        var head1 = head
+        var head2 = head
+        while head1?.next != nil {
+            while n > 0 {
+                head1 = head1?.next
+                n-=1
+            }
+            head1 = head1?.next
+            head2 = head2?.next
+        }
+        head2?.next = head2?.next?.next
+        return head
+    }
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
 //        let sweq = findRepeatNumber([2, 3, 1, 0, 2, 5, 3])
+//        var listNode1 = ListNode.init(1)
+//        listNode1.next = ListNode.init(2)
+//        listNode1.next?.next = ListNode.init(3)
+//        reverseList(listNode1)
+        
+        var head = ListNode.init(1)
+        head.next = ListNode.init(2)
+        head.next?.next = ListNode.init(3)
+        head.next?.next?.next = ListNode.init(4)
+        head.next?.next?.next?.next = ListNode.init(5)
+        let reResultNode = removeNthFromEnd(head, 2)
+        
+        var ewqe = [1,2,3,0,0,0]
+        var adad = [2,5,6]
+        merge(&ewqe, 3, adad, 3)
         let root = TreeNode.init(1)
 //        root.left = TreeNode.init(2)
         root.right = TreeNode.init(2)
@@ -157,8 +301,88 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         root1.right?.right = TreeNode.init(7)
 //        invertTree(root1)
         let dwdqa =  inorderTraversal(root1)
+        let qeqe = generate(5)
+        
+        findRepeatNumber1([2, 3, 1, 0, 0, 5, 6])
+        var asd = [0,1,0,3,12]
+        moveZeroes1(&asd)
+        
+        let resultArr = combinationSum([2,3,6,7], 7)
+        
+        let wsda = threeSumClosest([-1,2,1,-4], 1)
         
         return true
+        
+    }
+    func addTwoNumbers(_ l1: ListNode?, _ l2: ListNode?) -> ListNode? {
+        var list1 = l1
+        var list2 = l2
+        let  result = ListNode.init(0)
+        var result1 = result
+        var addResult = 0
+        while list1 != nil || list2 != nil {
+            let result =  (list1?.val ?? 0) + (list2?.val ?? 0) + addResult
+            addResult = result/10
+            result1.next = ListNode.init(result%10)
+            list2 = list2?.next
+            list1 = list1?.next
+            result1 = result1.next!
+        }
+        if addResult>0 {
+            result1.next = ListNode.init(addResult)
+        }
+        return result.next
+    }
+    func combinationSum(_ candidates: [Int], _ target: Int) -> [[Int]] {
+        if candidates.count == 0 {
+            return []
+        }
+        var resultArr = [[Int]]()
+        var targetArr = [Int]()
+        getResultSum(candidates.sorted(), target, 0, &resultArr, &targetArr)
+        return resultArr
+    }
+    func getResultSum(_ candidates: [Int], _ target: Int,_ start:Int,_ resutArr: inout[[Int]],_ targetArr:inout[Int])
+    {
+        if target < 0 {
+            return
+        }
+        if target == 0 {
+            resutArr.append(targetArr)
+            return
+        }
+        for i in start..<candidates.count {
+            if target - candidates[i] < 0 {
+                break
+            }
+            let nowNum = candidates[i]
+            targetArr.append(nowNum)
+            getResultSum(candidates, target-nowNum, i, &resutArr, &targetArr)
+            targetArr.removeLast()
+        }
+    }
+    func moveZeroes1(_ nums: inout [Int]) {
+        var i = 0
+        for j in 0..<nums.count {
+            if nums[j] != 0 {
+                nums.swapAt(i, j)
+                i += 1
+            }
+        }
+    }
+    func findRepeatNumber1(_ nums: [Int]) -> Int {
+
+        guard nums.count != 0 else {
+            return -1
+        }
+        var hash = [Int:Int]()
+        for i in 0..<nums.count {
+            if hash.keys.contains(nums[i]) {
+                return i
+            }
+            hash[nums[i]] = 1
+        }
+        return -1
     }
     //4.翻转二叉树
     func invertTree(_ root: TreeNode?) -> TreeNode? {
